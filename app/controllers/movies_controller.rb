@@ -3,7 +3,7 @@ class MoviesController < ApplicationController
   # overwirte all values in the session with those in params
   def move_params_to_session()
     params.keys().each() do 
-      |key| session[key] ||= params[key] 
+      |key| session[key] = params[key] 
     end
   end
 
@@ -21,7 +21,7 @@ class MoviesController < ApplicationController
     @all_ratings = Movie.get_all_ratings()
 
     # if ratings are in params use them as filer, otherwise show all movies
-    @movies = params[:ratings].nil?() ? Movie.all() : Movie.where(rating: [params[:ratings].keys()])
+    @movies = params[:ratings].nil?() ? Movie.where(rating: [session[:ratings].keys()]) : Movie.where(rating: [params[:ratings].keys()])
 
     # ordering stuff
     if params[:ordering]
