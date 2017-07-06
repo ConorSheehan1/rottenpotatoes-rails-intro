@@ -1,5 +1,12 @@
 class MoviesController < ApplicationController
 
+  # overwirte all values in the session with those in params
+  def move_params_to_session()
+    params.keys().each() do 
+      |key| session[key] ||= params[key] 
+    end
+  end
+
   def movie_params
     params.require(:movie).permit(:title, :rating, :description, :release_date)
   end
@@ -11,10 +18,9 @@ class MoviesController < ApplicationController
   end
 
   def index
-    # @movies = Movie.all()
     @all_ratings = Movie.get_all_ratings()
 
-    # if no boxes are unchecked, show everything
+    # if ratings are in params use them as filer, otherwise show all movies
     @movies = params[:ratings].nil?() ? Movie.all() : Movie.where(rating: [params[:ratings].keys()])
 
     # ordering stuff
@@ -24,17 +30,16 @@ class MoviesController < ApplicationController
 
       #css stuff
       if params[:ordering] == "title"
-        puts("!!title!!")
         @title="hilite"
       elsif params[:ordering] == "release_date"
         @date="hilite"
       end
+
     end
 
-    # # filter movies
-    # if params[:ratings]
-    #   @movies = @movies.where(rating: [params[:ratings].keys()])
-    # end
+    # save settings to params
+    move_params_to_session()
+    puts("params\n", params[:ratings], "\nsession\n", session[:ratings])
   end
 
   def new
