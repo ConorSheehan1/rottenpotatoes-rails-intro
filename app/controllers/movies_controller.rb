@@ -11,8 +11,12 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all()
+    # @movies = Movie.all()
     @all_ratings = Movie.get_all_ratings()
+
+    # if no boxes are unchecked, show everything
+    @movies = params[:ratings].nil?() ? Movie.all() : Movie.where(rating: [params[:ratings].keys()])
+
     # ordering stuff
     if params[:ordering]
       # sort movies
@@ -27,10 +31,10 @@ class MoviesController < ApplicationController
       end
     end
 
-    # filter movies
-    if params[:ratings]
-      @movies = @movies.where(rating: [params[:ratings].keys()])
-    end
+    # # filter movies
+    # if params[:ratings]
+    #   @movies = @movies.where(rating: [params[:ratings].keys()])
+    # end
   end
 
   def new
