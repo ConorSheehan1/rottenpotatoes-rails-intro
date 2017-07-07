@@ -20,8 +20,14 @@ class MoviesController < ApplicationController
   def index
     @all_ratings = Movie.get_all_ratings()
 
-    # if ratings are in params use them as filer, otherwise show all movies
-    @movies = params[:ratings].nil?() ? Movie.where(rating: [session[:ratings].keys()]) : Movie.where(rating: [params[:ratings].keys()])
+    # look in params, then session, then all movies
+    if params[:ratings]
+      @movies = Movie.where(rating: [params[:ratings].keys()])
+    elsif session[:ratings]
+      @movies = Movie.where(rating: [session[:ratings].keys()])
+    else
+      @movies = Movie.all()
+    end
 
     # ordering stuff
     if params[:ordering]
